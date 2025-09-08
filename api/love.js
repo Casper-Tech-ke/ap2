@@ -10,16 +10,15 @@ export default async function handler(req, res) {
 
     const customResponse = {
       success: true,
-      provider: "Casper Quotes API (ZenQuotes)",
+      provider: "CASPER TECH",
       category: "love",
       timestamp: new Date().toISOString(),
       quote: {
         text: randomQuote.q,
         author: randomQuote.a,
-        html: randomQuote.h,
-        category: "love"
+        
       },
-      feedback: "Stay inspired 💙"
+      feedback: "Stay inspired 💙 CASPER IS ALIVE 😎"
     };
 
     res.setHeader("Content-Type", "application/json");
