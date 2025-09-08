@@ -11,8 +11,7 @@ export default async function handler(req, res) {
     const customResponse = {
       success: true,
       provider: "CASPER TECH",
-      category: "love",
-      timestamp: new Date().toISOString(),
+      
       quote: {
         text: randomQuote.q,
         author: randomQuote.a,
