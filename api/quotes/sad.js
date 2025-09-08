@@ -9,9 +9,8 @@ export default async function handler(req, res) {
 
     const customResponse = {
       success: true,
-      provider: "Casper Quotes API (ZenQuotes)",
-      category: "sad",
-      timestamp: new Date().toISOString(),
+      provider: "CASPER TECH",
+      
       quote: {
         text: randomQuote.q,
         author: randomQuote.a,
