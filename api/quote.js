@@ -9,15 +9,13 @@ export default async function handler(req, res) {
 
     const customResponse = {
       success: true,
-      provider: "Casper Random Quotes API (ZenQuotes)",
+      provider: "CASPER TECH",
       timestamp: new Date().toISOString(),
       quote: {
         text: quoteData.q,
         author: quoteData.a,
-        html: quoteData.h,
-        category: "inspiration"
       },
-      feedback: "Stay inspired 💙 Great things are coming!"
+      feedback: "Stay inspired 💙 Great things are coming! REMEMBER CASPER IS ALIVE 🤢"
     };
 
     // ✅ Pretty print JSON (indentation = 2 spaces)
