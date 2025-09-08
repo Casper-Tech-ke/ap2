@@ -3,17 +3,26 @@ import * as cheerio from "cheerio";
 
 export default async function handler(req, res) {
   try {
-    const { method } = req;
+    const { method, query, body } = req;
     
-    if (method !== 'POST') {
+    // Support both GET and POST methods
+    let text1, text2;
+    
+    if (method === 'GET') {
+      // Extract from query parameters
+      text1 = query.text1;
+      text2 = query.text2;
+    } else if (method === 'POST') {
+      // Extract from request body
+      text1 = body.text1;
+      text2 = body.text2;
+    } else {
       return res.status(405).json({
         success: false,
-        error: "Only POST method allowed for text generation",
+        error: "Only GET and POST methods allowed",
         provider: "CASPER TECH"
       });
     }
-
-    const { text1, text2 } = req.body;
 
     // Validate inputs
     if (!text1) {
