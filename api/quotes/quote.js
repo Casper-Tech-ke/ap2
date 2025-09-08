@@ -10,7 +10,7 @@ export default async function handler(req, res) {
     const customResponse = {
       success: true,
       provider: "CASPER TECH",
-      timestamp: new Date().toISOString(),
+      
       quote: {
         text: quoteData.q,
         author: quoteData.a,
