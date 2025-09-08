@@ -20,12 +20,20 @@ export default async function handler(req, res) {
       feedback: "Stay inspired 💙 Great things are coming!"
     };
 
-    res.status(200).json(customResponse);
+    // ✅ Pretty print JSON (indentation = 2 spaces)
+    res.setHeader("Content-Type", "application/json");
+    res.status(200).send(JSON.stringify(customResponse, null, 2));
   } catch (err) {
-    res.status(500).json({
-      success: false,
-      error: "Failed to fetch quote",
-      details: err.message
-    });
+    res.status(500).send(
+      JSON.stringify(
+        {
+          success: false,
+          error: "Failed to fetch quote",
+          details: err.message
+        },
+        null,
+        2
+      )
+    );
   }
 }
