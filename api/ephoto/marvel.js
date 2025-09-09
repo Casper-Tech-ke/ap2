@@ -228,13 +228,26 @@ export default async function handler(req, res) {
     }
 
     if (!generatedImage) {
-      console.log("Available images in result:");
+      console.log("=== DEBUG: No result image found ===");
+      console.log("Available images in result page:");
       $result("img").each((i, el) => {
-        const src = $(el).attr("src") || $(el).attr("data-src");
-        const alt = $(el).attr("alt");
-        console.log(`  ${i}: src="${src}", alt="${alt}"`);
+        const src = $result(el).attr("src") || $result(el).attr("data-src");
+        const alt = $result(el).attr("alt");
+        const className = $result(el).attr("class");
+        console.log(`  ${i}: src="${src}", alt="${alt}", class="${className}"`);
       });
-      throw new Error("Generated image not found in result page");
+      
+      console.log("Available input fields:");
+      $result("input").each((i, el) => {
+        const name = $result(el).attr("name");
+        const value = $result(el).attr("value");
+        const type = $result(el).attr("type");
+        if (value && value.includes('ephoto360.com')) {
+          console.log(`  ${i}: name="${name}", type="${type}", value="${value}"`);
+        }
+      });
+      
+      throw new Error("Generated image not found in result page. Check debug output above.");
     }
 
     // Step 5: Respond with pretty JSON
