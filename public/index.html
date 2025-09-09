@@ -1,117 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>💙 Random Quotes</title>
-  <style>
-    body {
-      margin: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      background: linear-gradient(135deg, #1e3c72, #2a5298);
-      color: white;
-      overflow: hidden;
-    }
-    .container {
-      background: rgba(0, 0, 50, 0.6);
-      padding: 2rem;
-      border-radius: 1.5rem;
-      max-width: 700px;
-      text-align: center;
-      box-shadow: 0px 8px 30px rgba(0,0,0,0.4);
-      animation: fadeIn 1s ease-in-out;
-    }
-    h1 {
-      margin-bottom: 1rem;
-      font-size: 2rem;
-      animation: slideDown 1s ease-in-out;
-    }
-    #quote {
-      font-size: 1.5rem;
-      font-style: italic;
-      margin: 1rem 0;
-      animation: fadeInUp 1s ease-in-out;
-    }
-    #author {
-      font-size: 1.2rem;
-      margin-bottom: 1.5rem;
-    }
-    button {
-      margin: 0.5rem;
-      padding: 0.8rem 1.5rem;
-      border: none;
-      border-radius: 10px;
-      background: #2196f3;
-      color: white;
-      font-size: 1rem;
-      cursor: pointer;
-      transition: transform 0.2s, background 0.3s;
-    }
-    button:hover {
-      background: #1976d2;
-      transform: scale(1.05);
-    }
-    #loader {
-      display: none;
-      margin-top: 10px;
-      font-size: 0.9rem;
-    }
-    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-    @keyframes slideDown { from { transform: translateY(-30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-    @keyframes fadeInUp { from { transform: translateY(30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-  </style>
-</head>
-<body onload="getQuote()">
-  <div class="container">
-    <h1>💙 Random Quote Generator</h1>
-    <p id="quote">Loading...</p>
-    <p id="author"></p>
-    <p id="loader">Fetching quote...</p>
-    <div>
-      <button onclick="getQuote()">New Quote</button>
-      <button onclick="copyQuote()">Copy</button>
-      <button onclick="shareQuote()">Share</button>
-    </div>
-  </div>
-
-  <script>
-    const API_URL = "/api/quote"; // relative path (works on Vercel)
-
-    async function getQuote() {
-      const quoteBox = document.getElementById("quote");
-      const authorBox = document.getElementById("author");
-      const loader = document.getElementById("loader");
-
-      loader.style.display = "block";
-      quoteBox.textContent = "";
-      authorBox.textContent = "";
-
-      try {
-        let res = await fetch(API_URL);
-        let data = await res.json();
-
-        quoteBox.textContent = `"${data.quote.text}"`;
-        authorBox.textContent = `– ${data.quote.author}`;
-      } catch (err) {
-        quoteBox.textContent = "⚠️ Could not fetch a quote.";
-      } finally {
-        loader.style.display = "none";
-      }
-    }
-
-    function copyQuote() {
-      const text = document.getElementById("quote").textContent + " " + document.getElementById("author").textContent;
-      navigator.clipboard.writeText(text);
-      alert("✅ Copied to clipboard!");
-    }
-
-    function shareQuote() {
-      const text = document.getElementById("quote").textContent + " " + document.getElementById("author").textContent;
-      window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`, "_blank");
-    }
-  </script>
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Casper Tech API Docs</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  </head>
+  <body style="margin:0;padding:0;">
+    <div id="root"></div>
+    <!-- Vite will inject scripts here -->
+  </body>
 </html>
