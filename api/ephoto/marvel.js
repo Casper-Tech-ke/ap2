@@ -14,12 +14,21 @@ export default async function handler(req, res) {
       text1 = body.text1;
       text2 = body.text2;
     } else {
-      return res.status(405).json({
-        success: false,
-        error: "Only GET and POST methods allowed",
-        required: ["text1", "text2"],
-        provider: "CASPER TECH",
-      });
+      res.setHeader("Content-Type", "application/json");
+      return res
+        .status(405)
+        .send(
+          JSON.stringify(
+            {
+              success: false,
+              error: "Only GET and POST methods allowed",
+              required: ["text1", "text2"],
+              provider: "CASPER TECH",
+            },
+            null,
+            2
+          )
+        );
     }
 
     // Validate required params
@@ -28,29 +37,35 @@ export default async function handler(req, res) {
     if (!text2) missingParams.push("text2");
 
     if (missingParams.length > 0) {
-      return res.status(400).json({
-        success: false,
-        error: "Missing required parameters",
-        missing: missingParams,
-        required: ["text1", "text2"],
-        provider: "CASPER TECH",
-      });
+      res.setHeader("Content-Type", "application/json");
+      return res
+        .status(400)
+        .send(
+          JSON.stringify(
+            {
+              success: false,
+              error: "Missing required parameters",
+              missing: missingParams,
+              required: ["text1", "text2"],
+              provider: "CASPER TECH",
+            },
+            null,
+            2
+          )
+        );
     }
 
-    // Effect URL
+    // Effect URL (Marvel Example)
     const effectUrl =
       "https://en.ephoto360.com/create-text-effects-in-the-style-of-the-deadpool-logo-818.html";
 
-    console.log(`Processing Deadpool effect with text1: "${text1}", text2: "${text2}"`);
+    console.log(`Processing Marvel effect with text1: "${text1}", text2: "${text2}"`);
 
-    // Fetch effect page
+    // Step 1: Load page
     const effectResponse = await fetch(effectUrl, {
       headers: {
         "User-Agent":
           "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-        Accept:
-          "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8",
-        "Accept-Language": "en-US,en;q=0.9",
       },
     });
 
@@ -61,18 +76,16 @@ export default async function handler(req, res) {
     const effectHtml = await effectResponse.text();
     const $ = cheerio.load(effectHtml);
 
-    // Extract form
+    // Step 2: Extract form
     const form = $("#form_effect, form").first();
     if (form.length === 0) throw new Error("Form not found on the page");
 
-    // Collect form data
     const formData = new URLSearchParams();
+
     form.find('input[type="hidden"]').each((i, el) => {
       const name = $(el).attr("name");
       const value = $(el).attr("value");
-      if (name && value !== undefined) {
-        formData.append(name, value);
-      }
+      if (name && value !== undefined) formData.append(name, value);
     });
 
     const textInputs = [];
@@ -81,16 +94,19 @@ export default async function handler(req, res) {
       if (name) textInputs.push(name);
     });
 
-    // Append our text1 and text2
+    if (textInputs.length < 2) {
+      throw new Error("Marvel form did not expose 2 text inputs");
+    }
+
     formData.append(textInputs[0], text1);
     formData.append(textInputs[1], text2);
 
-    // Submit form
     const submitUrl =
       form.attr("action")?.startsWith("http")
         ? form.attr("action")
         : `https://en.ephoto360.com${form.attr("action")}`;
 
+    // Step 3: Submit form
     const submitResponse = await fetch(submitUrl, {
       method: "POST",
       headers: {
@@ -105,38 +121,66 @@ export default async function handler(req, res) {
     const resultHtml = await submitResponse.text();
     const $result = cheerio.load(resultHtml);
 
-    // Extract result image
+    // Step 4: Extract generated image
     let generatedImage = null;
-    $result("img").each((i, el) => {
-      const src = $result(el).attr("src");
-      if (src && src.includes("upload")) {
-        generatedImage = src.startsWith("http") ? src : `https://en.ephoto360.com${src}`;
-      }
-    });
+    const selectors = [
+      "img.img-responsive",
+      "img[src*='upload']",
+      "img[src*='result']",
+      "img[src*='temp']",
+      ".thumbnail img",
+      ".result-image img",
+      "#form_value img",
+    ];
 
-    if (!generatedImage) {
-      throw new Error("Generated image not found");
+    for (const selector of selectors) {
+      const imgElement = $result(selector).first();
+      if (imgElement.length > 0) {
+        const src = imgElement.attr("src");
+        if (src) {
+          generatedImage = src.startsWith("http")
+            ? src
+            : `https://en.ephoto360.com${src}`;
+          break;
+        }
+      }
     }
 
-    // Success response
-    return res.status(200).json({
-      success: true,
-      provider: "CASPER TECH",
-      data: {
-        effect: "Deadpool Logo Style",
-        inputs: { text1, text2 },
-        result: generatedImage,
-      },
-      feedback: "Deadpool text effect created successfully! 🔥 CASPER IS ALIVE 🥰",
-    });
+    if (!generatedImage) throw new Error("Generated image not found");
+
+    // Step 5: Respond pretty JSON
+    res.setHeader("Content-Type", "application/json");
+    return res.status(200).send(
+      JSON.stringify(
+        {
+          success: true,
+          provider: "CASPER TECH",
+          data: {
+            effect: "Marvel Logo Style",
+            inputs: { text1, text2 },
+            result: generatedImage,
+          },
+          feedback: "Marvel text effect created successfully! 🚀 CASPER IS ALIVE 🥰",
+        },
+        null,
+        2
+      )
+    );
   } catch (err) {
-    console.error("Deadpool effect error:", err.message);
-    return res.status(500).json({
-      success: false,
-      error: "Failed to create Deadpool text effect",
-      details: err.message,
-      required: ["text1", "text2"],
-      provider: "CASPER TECH",
-    });
+    console.error("Marvel effect error:", err.message);
+    res.setHeader("Content-Type", "application/json");
+    return res.status(500).send(
+      JSON.stringify(
+        {
+          success: false,
+          error: "Failed to create Marvel text effect",
+          details: err.message,
+          required: ["text1", "text2"],
+          provider: "CASPER TECH",
+        },
+        null,
+        2
+      )
+    );
   }
 }
