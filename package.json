@@ -2,23 +2,24 @@
   "name": "ap2",
   "version": "1.0.0",
   "type": "module",
+  "private": true,
   "dependencies": {
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "node-fetch": "^3.3.2",
     "cheerio": "^1.1.2",
-    "openai": "^5.20.0"
+    "openai": "^5.20.0",
+    "express": "^4.19.2"
   },
   "devDependencies": {
     "vite": "^4.0.0",
-    "@vitejs/plugin-react": "^4.0.0",
-    "gh-pages": "^6.0.0"
+    "@vitejs/plugin-react": "^4.0.0"
   },
   "scripts": {
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "deploy": "vite build && gh-pages -d dist"
+    "start": "node server.js"
   },
   "browserslist": [
     ">0.2%",
